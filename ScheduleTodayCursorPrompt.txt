@@ -1,0 +1,73 @@
+# /scheduletoday
+
+Create an energy-based daily plan. Picks your tasks so you don't have to decide.
+
+---
+
+~~~
+# Daily Planning -- scheduletoday
+
+You are creating a daily plan for the user. The goal is to offload the "what should I do?" decision entirely so they just execute.
+
+## Step 1: Check energy level
+
+Ask the user: "How's your energy today? (low / medium / high)"
+
+If they already stated their energy in the message, skip the question.
+
+## Step 2: Read current context
+
+Read these files (or the equivalent in their workspace) to understand what's active:
+- Their task list (e.g. `Tasks/personal.md`) — active tasks and deadlines
+- Job pipeline if they use one (e.g. `job-search/pipeline.md`) — active opportunities
+- Check for any overdue or time-sensitive items
+- Check Google Calendar for upcoming events and any changes
+- Look for fun or creative tasks to recommend
+
+## Step 3: Build the plan
+
+### Low energy (1 task + recovery)
+- Pick 1 small, completable task (admin, follow-up, under 30 min)
+- Suggest a recovery activity (from their self-knowledge or recovery notes if they have a Hands-On Recovery section, matching energy tier)
+- Include the Minimum Viable Day floor: eat something, step outside for 2 min, do the 1 task
+- Remind them: "If you do this one thing, the day counts."
+
+### Medium energy (3–4 things)
+- Pick 3–4 tasks mixing: at least 1 job/career + 1 life admin + 1 fun/learning/creative
+- Prioritize anything with an upcoming deadline
+- Suggest Pomodoro rhythm: 25 min work / 5 min wander, 3 cycles then a real break
+
+### High energy (up to 5 things)
+- Pick 3–5 tasks, front-loading the hardest or most important
+- This is the day for interviews, deep work, networking, or "critical" items
+- Still suggest breaks — high energy is not infinite energy
+- Remind them to stop before crashing, not after
+
+## Step 4: Output format and save to today.md
+
+**Always save the plan to their today file** (e.g. `Tasks/today.md`, or the path they use with the Today app). Overwrite the file with:
+- Header: `# [Day], [Month] [Date], [Year]`
+- Section: `## Today's plan ([energy level] energy)` with the task list, minimum viable day (if low energy), recovery/fun, and remember. If they have a recurring monthly check-in (e.g. on the 15th), add a note when that date is relevant.
+- Section: `## Calendar` — table of events for the next 3 days (from Google Calendar) or "Nothing scheduled".
+- Section: `## Job Pipeline` — brief pipeline counts and next follow-ups (if they use a pipeline file), or omit.
+- Section: `## Upcoming Deadlines` — next 5–7 deadlines from context.
+
+Then show the user the plan in chat.
+
+**Plan format:**
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3 (if applicable)
+
+**Recovery/fun:** [two suggestions]
+
+**Remember:** [one relevant reminder from their notes if available, or a general supportive line; rotate when possible]
+
+## Key principles
+- Fewer tasks done > many tasks attempted. Don't overload.
+- Include something interesting or novel when possible.
+- If the task list feels overloaded, say so directly.
+- Be decisive. Pick tasks FOR them. Don't present 5 options to choose from.
+- The goal is a trellis, not a cage.
+- When they ask for daily priorities or a weekly review near a recurring check-in date (e.g. 15th), remind them if that applies.
+~~~

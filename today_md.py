@@ -5,6 +5,7 @@ Single source of truth for file path, load, segment, and write-back.
 
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional
@@ -63,6 +64,40 @@ def load_and_parse(path: Path) -> tuple[Optional[list[str]], Optional[list[Task]
             )
 
     return lines, tasks, None
+
+
+# Date in first line. Supports:
+#   # Sunday, February 15, 2026 (whatsuptoday format)
+#   # February 15, 2026 / # Feb 15, 2026
+#   legacy: something -- Sunday, February 15, 2026
+_DATE_PATTERNS = [
+    ("%A, %B %d, %Y", re.compile(r"^#\s*(\w+,?\s+\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+    ("%A, %b %d, %Y", re.compile(r"^#\s*(\w+,?\s+\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+    ("%B %d, %Y", re.compile(r"^#\s*(\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+    ("%b %d, %Y", re.compile(r"^#\s*(\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+    ("%A, %B %d, %Y", re.compile(r".*--\s*(\w+,?\s+\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+    ("%A, %b %d, %Y", re.compile(r".*--\s*(\w+,?\s+\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+    ("%b %d, %Y", re.compile(r".*--\s*(\w+\s+\d{1,2},?\s+\d{4})", re.IGNORECASE)),
+]
+
+
+def is_plan_stale(lines: list[str]) -> bool:
+    """
+    True if the plan looks like it's from another day (first line date != today).
+    Returns True (stale) if no date found or parse fails, so we nudge to refresh.
+    """
+    if not lines:
+        return True
+    first = lines[0].strip()
+    for fmt, pattern in _DATE_PATTERNS:
+        m = pattern.match(first)
+        if m:
+            try:
+                parsed = datetime.strptime(m.group(1).strip(), fmt).date()
+                return parsed != datetime.now().date()
+            except ValueError:
+                continue
+    return True
 
 
 def toggle_task(path: Path, lines: list[str], task: Task, new_done: bool) -> Optional[str]:
